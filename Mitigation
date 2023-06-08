@@ -1,0 +1,44 @@
+function poolAllocationForExcessETHDeposit(uint256 _excessETHAmount)
+    external
+    override
+    returns (uint256[] memory selectedPoolCapacity, uint8[] memory poolIdArray)
+{
+    UtilLib.onlyStaderContract(msg.sender, staderConfig, staderConfig.STAKE_POOL_MANAGER());
+    require(_excessETHAmount > 0, "Invalid amount"); // Input validation
+
+    uint256 ethToDeposit = _excessETHAmount;
+    IPoolUtils poolUtils = IPoolUtils(staderConfig.getPoolUtils());
+    poolIdArray = poolUtils.getPoolIdArray();
+    uint256 poolCount = poolIdArray.length;
+    uint256 ETH_PER_NODE = staderConfig.getStakedEthPerNode();
+    selectedPoolCapacity = new uint256[](poolCount);
+    uint256 selectedValidatorCount;
+    uint256 i = poolIdArrayIndexForExcessDeposit;
+
+    for (uint256 j; j < poolCount; ) {
+        uint256 poolCapacity = poolUtils.getQueuedValidatorCountByPool(poolIdArray[i]);
+        uint256 poolDepositSize = ETH_PER_NODE - poolUtils.getCollateralETH(poolIdArray[i]);
+        uint256 remainingValidatorsToDeposit = ethToDeposit / poolDepositSize;
+
+        // Apply boundary checks
+        uint256 maxCapacity = Math.min(poolAllocationMaxSize, _excessETHAmount / ETH_PER_NODE);
+        selectedPoolCapacity[i] = Math.min(
+            maxCapacity - selectedValidatorCount,
+            Math.min(poolCapacity, remainingValidatorsToDeposit)
+        );
+
+        selectedValidatorCount += selectedPoolCapacity[i];
+        ethToDeposit -= selectedPoolCapacity[i] * poolDepositSize;
+        i = (i + 1) % poolCount;
+
+        // Check if the maximum capacity has been reached or the ETH amount is exhausted
+        if (selectedValidatorCount >= maxCapacity || ethToDeposit < ETH_PER_NODE) {
+            poolIdArrayIndexForExcessDeposit = i;
+            break;
+        }
+
+        unchecked {
+            ++j;
+        }
+    }
+}
