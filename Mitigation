@@ -24,6 +24,7 @@ function poolAllocationForExcessETHDeposit(uint256 _excessETHAmount)
         uint256 maxCapacity = Math.min(poolAllocationMaxSize, _excessETHAmount / ETH_PER_NODE);
         selectedPoolCapacity[i] = Math.min(
             maxCapacity - selectedValidatorCount,
+         // Introduced a new variable maxCapacity to ensure that the selected pool capacity does not exceed the maximum capacity based on the available excess ETH.
             Math.min(poolCapacity, remainingValidatorsToDeposit)
         );
 
