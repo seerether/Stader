@@ -1,0 +1,8 @@
+    uint256 public constant ER_CHANGE_MAX_BPS = 10000;
+    uint256 public override erChangeLimit;
+    uint256 public constant MIN_TRUSTED_NODES = 5;
+
+    /// @inheritdoc IStaderOracle
+    uint256 public override reportingBlockNumberForWithdrawnValidators;
+    /// @inheritdoc IStaderOracle
+    uint256 public override trustedNodesCount;
