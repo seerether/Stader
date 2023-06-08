@@ -1,6 +1,0 @@
-    /// @inheritdoc IStaderOracle
-    mapping(address => bool) public override isTrustedNode;
-    mapping(bytes32 => bool) private nodeSubmissionKeys;
-    mapping(bytes32 => uint8) private submissionCountKeys;
-    mapping(bytes32 => uint16) public override missedAttestationPenalty;
-    uint256[] private sdPrices;
