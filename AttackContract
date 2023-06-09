@@ -1,7 +1,7 @@
 import './library/UtilLib.sol';
 import './interfaces/IVaultProxy.sol';
 
-contract EvilContract {
+contract MaliciousContract {
     IVaultProxy public vaultProxy;
 
     constructor(IVaultProxy _vaultProxy) {
