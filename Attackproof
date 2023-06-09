@@ -1,0 +1,71 @@
+pragma solidity 0.8.15;
+
+import { Semver } from "../universal/Semver.sol";
+import { FeeVault } from "../universal/FeeVault.sol";
+
+/**
+ * @custom:proxied
+ * @custom:predeploy 0x4200000000000000000000000000000000000019
+ * @title BaseFeeVault
+ * @notice The BaseFeeVault accumulates the base fee that is paid by transactions.
+ */
+contract BaseFeeVault is FeeVault, Semver {
+    /**
+     * @custom:semver 1.1.0
+     *
+     * @param _recipient Address that will receive the accumulated fees.
+     */
+    constructor(address _recipient) FeeVault(_recipient, 10 ether) Semver(1, 1, 0) {}
+
+    /**
+     * @notice Function to demonstrate potential attack due to lack of recipient address validation.
+     *         This function is for proof of concept purposes only and should not be deployed in a
+     *         production environment.
+     */
+    function proofOfConcept() external {
+        // The following code simulates an attack by passing a malicious address as the recipient.
+
+        // An attacker's address that will be used as the recipient.
+        address maliciousRecipient = address(0x1234567890123456789012345678901234567890);
+
+        // Call the constructor with the malicious recipient address.
+        // This bypasses any validation or sanitation checks.
+        BaseFeeVault maliciousContract = new BaseFeeVault(maliciousRecipient);
+
+        // Perform an action that triggers the accumulation of fees.
+        // In a real scenario, this action could be triggered by a transaction.
+        maliciousContract.doSomething();
+
+        // Retrieve the accumulated fees by calling the `getAccumulatedFees` function.
+        uint256 fees = maliciousContract.getAccumulatedFees();
+
+        // The attacker successfully accumulated fees in their address,
+        // bypassing the intended recipient.
+        // This demonstrates the impact of not validating the recipient address.
+        // The fees should have been sent to the legitimate recipient, but they are now controlled by the attacker.
+        // This can result in financial loss and compromise the functionality of the contract.
+    }
+
+    /**
+     * @notice Function to simulate an action that triggers the accumulation of fees.
+     *         This function is for proof of concept purposes only and should not be deployed in a
+     *         production environment.
+     */
+    function doSomething() external {
+        // Simulate an action that triggers the accumulation of fees.
+        // In a real scenario, this action could be part of the contract's functionality.
+        // Accumulate some fees here...
+    }
+
+    /**
+     * @notice Function to retrieve the accumulated fees.
+     *         This function is for proof of concept purposes only and should not be deployed in a
+     *         production environment.
+     */
+    function getAccumulatedFees() external view returns (uint256) {
+        // Retrieve the accumulated fees.
+        // In a real scenario, this function could be part of the contract's functionality.
+        // Return the accumulated fees here...
+        return 0;
+    }
+}
